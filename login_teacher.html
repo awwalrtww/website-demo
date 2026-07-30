@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Portal - TeamPoints</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="teachericon.png">
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    body { 
+      background-color: #1e3a8a; 
+      margin: 0; 
+      padding: 0; 
+      font-family: sans-serif; 
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #login-screen {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .welcome-icon { font-size: 3rem; color: #1e40af; margin-bottom: 10px; }
+    .login-title { font-size: 1.5rem; font-weight: bold; color: #1e293b; margin-bottom: 5px; }
+    .login-subtitle { font-size: 0.9rem; color: #64748b; margin-bottom: 25px; }
+    .form-group { text-align: left; margin-bottom: 15px; }
+    .form-group label { font-size: 0.85rem; font-weight: bold; color: #334155; display: block; margin-bottom: 6px; }
+    .form-group input[type="text"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; }
+    
+    .remember-me-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      color: #475569;
+      cursor: pointer;
+    }
+    .remember-me-group input { cursor: pointer; width: 16px; height: 16px; }
+
+    .btn-submit { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.2s ease; margin-top: 5px; }
+    .btn-submit:hover { background: #1d4ed8; }
+
+    #teacher-dashboard { display: none; width: 100%; max-width: 1100px; margin: 20px; }
+    .window-container { background: #fff; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    
+    .app-header { display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 10px 20px 0 20px; border-bottom: 2px solid #e2e8f0; overflow-x: auto; }
+    .brand { font-size: 1.2rem; font-weight: bold; color: #1e40af; display: flex; align-items: center; gap: 8px; padding-bottom: 12px; white-space: nowrap; }
+    
+    .nav-tabs { display: flex; gap: 8px; }
+    .nav-btn { background: transparent; border: none; padding: 10px 16px; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 0.9rem; }
+    .nav-btn:hover { color: #1e40af; background: #f8fafc; border-radius: 6px 6px 0 0; }
+    .nav-btn.active { color: #1e40af; border-bottom: 3px solid #1e40af; }
+
+    .teacher-badge { background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+
+    .btn-logout {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      transition: background 0.2s ease;
+    }
+    .btn-logout:hover { background: #dc2626; }
+
+    .tab-content { display: none; padding: 20px; }
+    .tab-content.active { display: block; }
+
+    .admin-card { background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 20px; }
+    .form-row { display: flex; gap: 10px; align-items: center; }
+    .btn-action { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .btn-danger { background: #dc2626; color: white; }
+    .btn-pts { background: #2563eb; color: white; }
+    .btn-toggle { background: #e2e8f0; color: #334155; padding: 4px 10px; font-size: 0.8rem; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; }
+    
+    .search-box { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; box-sizing: border-box; }
+    .pts-control-group { display: flex; gap: 6px; align-items: center; }
+    .pts-sign-select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: bold; background: #f8fafc; cursor: pointer; }
+    .pts-input { width: 60px !important; padding: 6px 8px !important; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; flex: none !important; }
+    
+    .group-tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-left: 4px; }
+    .tag-red    { background: #fecaca; color: #b91c1c; border: 1px solid #f87171; }
+    .tag-orange { background: #fed7aa; color: #c2410c; border: 1px solid #fb923c; }
+    .tag-yellow { background: #fef08a; color: #a16207; border: 1px solid #facc15; }
+    .tag-green  { background: #bbf7d0; color: #15803d; border: 1px solid #4ade80; }
+    .tag-blue   { background: #bfdbfe; color: #1d4ed8; border: 1px solid #60a5fa; }
+    .tag-purple { background: #e9d5ff; color: #6b21a8; border: 1px solid #c084fc; }
+    .tag-pink   { background: #fbcfe8; color: #be185d; border: 1px solid #f472b6; }
+    .tag-teal   { background: #99f6e4; color: #0f766e; border: 1px solid #2dd4bf; }
+    
+    .collapsible-header { display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+    .collapsible-body { overflow: hidden; }
+    .collapsed { display: none !important; }
+
+    .cap-info {
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+    .cap-normal { background: #e2e8f0; color: #334155; }
+    .cap-maxed { background: #fecaca; color: #991b1b; }
+
+    #loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.75);
+      z-index: 9999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    .spinner {
+      width: 50px; height: 50px;
+      border: 5px solid #f3f3f3; border-top: 5px solid #3b82f6;
+      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-text" style="font-size: 1.1rem; font-weight: 600;">Processing request...</div>
+  </div>
+
+  <!-- LOGIN WELCOME SCREEN -->
+  <div id="login-screen">
+    <div class="welcome-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+    <div class="login-title">Teacher Portal</div>
+    <div class="login-subtitle">Please enter your details to access student points management</div>
+    
+    <form onsubmit="handleTeacherLogin(event)">
+      <div class="form-group">
+        <label for="first-name">First Name</label>
+        <input type="text" id="first-name" placeholder="e.g. Jane" required>
+      </div>
+      <div class="form-group">
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" placeholder="e.g. Smith" required>
+      </div>
+      
+      <label class="remember-me-group">
+        <input type="checkbox" id="remember-me" checked> Keep me signed in
+      </label>
+
+      <button type="submit" class="btn-submit">Enter Portal <i class="fa-solid fa-arrow-right"></i></button>
+    </form>
+  </div>
+
+  <!-- TEACHER DASHBOARD -->
+  <div id="teacher-dashboard">
+    <div class="window-container">
+      <header class="app-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="brand"><i class="fa-solid fa-graduation-cap"></i> Teacher Portal</div>
+          <div class="teacher-badge"><i class="fa-solid fa-user-check"></i> <span id="display-teacher-name">Teacher</span></div>
+          <button class="btn-logout" onclick="handleTeacherLogout()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+        </div>
+        <nav class="nav-tabs">
+          <button class="nav-btn active" onclick="switchTab(event, 'tab-points')"><i class="fa-solid fa-star"></i> Points</button>
+          <button class="nav-btn" onclick="switchTab(event, 'tab-members')"><i class="fa-solid fa-users"></i> Members List</button>
+        </nav>
+      </header>
+
+      <div class="dashboard-content">
+
+        <!-- TAB 1: POINTS MANAGEMENT -->
+        <div id="tab-points" class="tab-content active">
+          <div class="admin-card">
+            <div class="collapsible-header">
+              <div>
+                <h3 style="margin: 0; display: inline-block;">Award / Deduct Points</h3>
+                <span style="font-size: 0.8rem; color: #64748b; margin-left: 8px;">(Max 100 pts added/day per student)</span>
+              </div>
+              <button class="btn-toggle" onclick="toggleSection('points-management-list', this)">Collapse List ▲</button>
+            </div>
+            <input type="text" id="user-search-input" class="search-box" placeholder="🔍 Search member by name, class, or house..." onkeyup="renderAdminLists()"/>
+            <div id="points-management-list" class="collapsible-body"></div>
+          </div>
+        </div>
+
+        <!-- TAB 2: MEMBERS LIST -->
+        <div id="tab-members" class="tab-content">
+          <div class="admin-card">
+            <div class="collapsible-header">
+              <h3 style="margin: 0;">Student Roster</h3>
+              <button class="btn-toggle" onclick="toggleSection('group-delete-list', this)">Collapse List ▲</button>
+            </div>
+            <div id="group-delete-list" class="collapsible-body"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkS8NpfY6yH2mNZrwEPQWG3whmPuqvViI",
+      authDomain: "awwal-42d25.firebaseapp.com",
+      databaseURL: "https://awwal-42d25-default-rtdb.firebaseio.com",
+      projectId: "awwal-42d25",
+      storageBucket: "awwal-42d25.firebasestorage.app",
+      messagingSenderId: "561761293729",
+      appId: "1:561761293729:web:be388125732c432fd4a7e0",
+      measurementId: "G-NC5ERYM2SE"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const DAILY_POINT_CAP = 100;
+    let currentTeacher = null;
+
+    function getTodayKey() {
+      const today = new Date();
+      return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTeacher = localStorage.getItem('teacherName');
+      if (savedTeacher) {
+        currentTeacher = savedTeacher;
+        showDashboard(savedTeacher);
+      }
+    });
+
+    async function handleTeacherLogin(e) {
+      e.preventDefault();
+      const firstName = document.getElementById('first-name').value.trim();
+      const surname = document.getElementById('surname').value.trim();
+      const keepSignedIn = document.getElementById('remember-me').checked;
+
+      if (firstName && surname) {
+        showLoading("Registering session...");
+        currentTeacher = `${firstName} ${surname}`;
+        
+        if (keepSignedIn) {
+          localStorage.setItem('teacherName', currentTeacher);
+        }
+
+        const teacherRef = db.ref('teachers').push();
+        await teacherRef.set({
+          firstName: firstName,
+          surname: surname,
+          fullName: currentTeacher,
+          loggedInAt: new Date().toISOString()
+        });
+
+        showDashboard(currentTeacher);
+        hideLoading();
+      }
+    }
+
+    function showDashboard(name) {
+      document.getElementById('display-teacher-name').innerText = `Teacher: ${name}`;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('teacher-dashboard').style.display = 'block';
+    }
+
+    function handleTeacherLogout() {
+      if (confirm("Are you sure you want to sign out?")) {
+        showLoading("Signing out...");
+        
+        localStorage.removeItem('teacherName');
+        
+        if (currentTeacher) {
+          db.ref('teachers').push({
+            fullName: currentTeacher,
+            loggedOutAt: new Date().toISOString()
+          });
+        }
+
+        currentTeacher = null;
+        document.getElementById('first-name').value = '';
+        document.getElementById('surname').value = '';
+        document.getElementById('teacher-dashboard').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'block';
+        hideLoading();
+      }
+    }
+
+    function switchTab(evt, tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+
+    function toggleSection(containerId, btnElement) {
+      const container = document.getElementById(containerId);
+      if (container.classList.contains('collapsed')) {
+        container.classList.remove('collapsed');
+        btnElement.innerText = "Collapse List ▲";
+      } else {
+        container.classList.add('collapsed');
+        btnElement.innerText = "Expand List ▼";
+      }
+    }
+
+    function showLoading(message) {
+      const overlay = document.getElementById('loading-overlay');
+      const text = document.getElementById('loading-text');
+      if (message) text.innerText = message;
+      overlay.style.display = 'flex';
+    }
+
+    function hideLoading() {
+      document.getElementById('loading-overlay').style.display = 'none';
+    }
+
+    let globalGroupsCache = {}; 
+    const classColorPalette = ['tag-blue', 'tag-yellow', 'tag-green', 'tag-purple', 'tag-pink', 'tag-orange', 'tag-teal', 'tag-red'];
+    const classColorMap = {};
+
+    function getClassColor(className, defaultColor) {
+      if (!className) return 'tag-blue';
+      const key = className.trim().toLowerCase();
+      if (defaultColor) {
+        classColorMap[key] = normalizeTagColor(defaultColor);
+        return classColorMap[key];
+      }
+      if (!classColorMap[key]) {
+        const assignedIndex = Object.keys(classColorMap).length % classColorPalette.length;
+        classColorMap[key] = classColorPalette[assignedIndex];
+      }
+      return classColorMap[key];
+    }
+
+    function normalizeTagColor(colorInput) {
+      if (!colorInput) return 'tag-red';
+      const clean = colorInput.toString().toLowerCase().trim().replace('tag-', '');
+      const validColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'teal'];
+      return validColors.includes(clean) ? `tag-${clean}` : 'tag-red';
+    }
+
+    async function ensureGroupExists(targetTable, groupName, colorClass) {
+      if (!groupName) return null;
+      try {
+        const snap = await db.ref('groups').once('value');
+        const groups = snap.val() || {};
+        
+        let existingKey = Object.keys(groups).find(key => 
+          groups[key].tableId === targetTable && 
+          (groups[key].name || '').toLowerCase() === groupName.toLowerCase()
+        );
+
+        if (!existingKey) {
+          const newRef = db.ref('groups').push();
+          existingKey = newRef.key;
+          await newRef.set({
+            name: groupName,
+            tableId: targetTable,
+            tagText: targetTable.replace('-board', '').toUpperCase(),
+            tagColor: colorClass || 'tag-blue',
+            seasonPoints: 0,
+            allTimePoints: 0,
+            change: 0
+          });
+        }
+        return existingKey;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    async function submitPoints(id) {
+      const sign = document.getElementById(`pts-sign-${id}`).value;
+      const rawVal = parseInt(document.getElementById(`pts-val-${id}`).value) || 0;
+      if (rawVal <= 0) return alert('Please enter a valid point amount');
+
+      const amount = sign === '+' ? rawVal : -rawVal;
+      const todayKey = getTodayKey();
+
+      showLoading("Checking daily cap & saving...");
+
+      try {
+        const groupSnap = await db.ref('groups/' + id).once('value');
+        const groupData = groupSnap.val();
+        if (!groupData) { hideLoading(); return; }
+
+        const currentDailyPoints = (groupData.dailyPoints && groupData.dailyPoints[todayKey]) ? groupData.dailyPoints[todayKey] : 0;
+
+        if (amount > 0 && (currentDailyPoints + amount > DAILY_POINT_CAP)) {
+          const remainingAllowed = Math.max(0, DAILY_POINT_CAP - currentDailyPoints);
+          hideLoading();
+          return alert(`⚠️ Cannot add ${amount} points!\n\n${groupData.name} has already received ${currentDailyPoints}/${DAILY_POINT_CAP} points today.\nMaximum points remaining today: ${remainingAllowed} pts.`);
+        }
+
+        await db.ref('groups/' + id).transaction(group => {
+          if (group) {
+            group.seasonPoints = Math.max(0, (group.seasonPoints || 0) + amount);
+            group.allTimePoints = Math.max(0, (group.allTimePoints || 0) + amount);
+            group.change = amount;
+            group.lastUpdatedBy = currentTeacher || 'Teacher';
+
+            if (!group.dailyPoints) group.dailyPoints = {};
+            if (amount > 0) {
+              group.dailyPoints[todayKey] = (group.dailyPoints[todayKey] || 0) + amount;
+            }
+          }
+          return group;
+        });
+
+        if (groupData.className) {
+          const classKey = await ensureGroupExists('class-board', groupData.className, groupData.classColor);
+          if (classKey) {
+            await db.ref('groups/' + classKey).transaction(cg => {
+              if (cg) {
+                cg.seasonPoints = Math.max(0, (cg.seasonPoints || 0) + amount);
+                cg.allTimePoints = Math.max(0, (cg.allTimePoints || 0) + amount);
+                cg.change = amount;
+                cg.lastUpdatedBy = currentTeacher || 'Teacher';
+              }
+              return cg;
+            });
+          }
+        }
+
+        if (groupData.houseName) {
+          const houseKey = await ensureGroupExists('house-board', groupData.houseName, groupData.houseColor);
+          if (houseKey) {
+            await db.ref('groups/' + houseKey).transaction(hg => {
+              if (hg) {
+                hg.seasonPoints = Math.max(0, (hg.seasonPoints || 0) + amount);
+                hg.allTimePoints = Math.max(0, (hg.allTimePoints || 0) + amount);
+                hg.change = amount;
+                hg.lastUpdatedBy = currentTeacher || 'Teacher';
+              }
+              return hg;
+            });
+          }
+        }
+
+        hideLoading();
+      } catch (err) {
+        hideLoading();
+        alert("Error saving points: " + err.message);
+      }
+    }
+
+    db.ref('groups').on('value', snapshot => {
+      globalGroupsCache = snapshot.val() || {};
+      Object.values(globalGroupsCache).forEach(item => {
+        if (item.className && item.classColor) {
+          classColorMap[item.className.trim().toLowerCase()] = item.classColor;
+        }
+      });
+      renderAdminLists();
+    });
+
+    function renderAdminLists() {
+      const deleteList = document.getElementById('group-delete-list');
+      const ptsList = document.getElementById('points-management-list');
+      const searchQuery = (document.getElementById('user-search-input')?.value || '').toLowerCase().trim();
+      const todayKey = getTodayKey();
+
+      deleteList.innerHTML = '';
+      ptsList.innerHTML = '';
+
+      Object.keys(globalGroupsCache).forEach(id => {
+        const g = globalGroupsCache[id];
+        const matchName = (g.name || '').toLowerCase().includes(searchQuery);
+        const matchClass = (g.className || '').toLowerCase().includes(searchQuery);
+        const matchHouse = (g.houseName || '').toLowerCase().includes(searchQuery);
+        const matchesSearch = matchName || matchClass || matchHouse;
+
+        if (g.tableId === 'personal-board') {
+          const syncedClassColor = getClassColor(g.className, g.classColor);
+
+          deleteList.innerHTML += `
+            <div style="border-bottom:1px solid #e2e8f0; padding:10px 0;">
+              <div class="form-row" style="align-items:center;">
+                <span style="flex:1;">
+                  <b>${g.name || 'Unnamed'}</b> 
+                  <span class="group-tag ${syncedClassColor}">${g.className || ''}</span>
+                  <span class="group-tag ${g.houseColor || 'tag-red'}">${g.houseName || ''}</span>
+                </span>
+                <span style="font-size: 0.85rem; font-weight: bold; color: #1e40af;">${g.seasonPoints || 0} pts</span>
+              </div>
+            </div>
+          `;
+
+          if (matchesSearch) {
+            const todayPts = (g.dailyPoints && g.dailyPoints[todayKey]) ? g.dailyPoints[todayKey] : 0;
+            const isCapReached = todayPts >= DAILY_POINT_CAP;
+            const capBadgeClass = isCapReached ? 'cap-maxed' : 'cap-normal';
+
+            const updatedInfo = g.lastUpdatedBy ? `<br><small style="color:#2563eb;">Last updated by: ${g.lastUpdatedBy}</small>` : '';
+
+            ptsList.innerHTML += `
+              <div class="form-row" style="align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:8px; margin-bottom:8px;">
+                <span style="flex:1;">
+                  <b>${g.name || 'Unnamed'}</b> 
+                  <span class="group-tag ${g.houseColor || 'tag-red'}">${g.houseName || ''}</span>
+                  <span class="cap-info ${capBadgeClass}">Today: ${todayPts}/${DAILY_POINT_CAP} pts</span>
+                  <br><small style="color:#64748b;">(${g.className || ''}) - <b>${g.seasonPoints || 0} pts total</b></small>
+                  ${updatedInfo}
+                </span>
+                <div class="pts-control-group">
+                  <select id="pts-sign-${id}" class="pts-sign-select">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                  </select>
+                  <input type="number" id="pts-val-${id}" class="pts-input" value="10" min="1">
+                  <button class="btn-action btn-pts" onclick="submitPoints('${id}')">Confirm</button>
+                </div>
+              </div>
+            `;
+          }
+        }
+      });
+
+      if (ptsList.innerHTML === '') {
+        ptsList.innerHTML = `<div style="text-align:center; padding: 15px; color: #94a3b8;">No members found matching your search.</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
